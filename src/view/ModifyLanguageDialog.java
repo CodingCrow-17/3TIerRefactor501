@@ -19,7 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.ReadLogic;
+import controller.WriteLogic;
 import model.Country;
 import model.Language;
 
@@ -51,12 +52,13 @@ public class ModifyLanguageDialog extends JDialog {
 	private Component scpnCountries;
 
 	private String[] countryNames;
-	private LogicLayer modifyLanguageLogic;
+	private WriteLogic modifyLanguageLogic;
+	private ReadLogic readLogic = ReadLogic.getInstance();
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, LogicLayer modifyLanguageLogic, String[] languages, String[] countries)
+	public static void main(String[] args, WriteLogic modifyLanguageLogic, String[] languages, String[] countries)
 	{
 		try {
 			ModifyLanguageDialog dialog = new ModifyLanguageDialog(modifyLanguageLogic, languages,countries);
@@ -70,7 +72,7 @@ public class ModifyLanguageDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ModifyLanguageDialog(LogicLayer modifyLanguageLogic, String[] languages, String[] countries) {
+	public ModifyLanguageDialog(WriteLogic modifyLanguageLogic, String[] languages, String[] countries) {
 		getContentPane().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -345,10 +347,10 @@ public class ModifyLanguageDialog extends JDialog {
 			String languageName = cbbxLanguageSelection.getSelectedItem().toString();
 			
 			Country[] alreadyOfficialIn = 
-					modifyLanguageLogic.getAllCountries(String.valueOf(modifyLanguageLogic.getLanguageID(languageName)));
+					readLogic.getAllCountries(String.valueOf(readLogic.getLanguageID(languageName)));
 	
 			Language thisLanguage = 
-					modifyLanguageLogic.getLanguage(String.valueOf(modifyLanguageLogic.getLanguageID(languageName)));
+					readLogic.getLanguage(String.valueOf(readLogic.getLanguageID(languageName)));
 			
 			insertItemsIntoCbbx(cbbxAddableCountries, countryNames);
 	
@@ -448,7 +450,7 @@ public class ModifyLanguageDialog extends JDialog {
 		
 		String[] newLanguageCountries = countries.split(",\r\n");
 
-		int languageID = modifyLanguageLogic.getLanguageID(cbbxLanguageSelection.getSelectedItem().toString());
+		int languageID = readLogic.getLanguageID(cbbxLanguageSelection.getSelectedItem().toString());
 
 		Language newLanguage = new Language(languageName);
 

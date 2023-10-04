@@ -15,7 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.Country;
 
 import java.awt.Font;
@@ -61,7 +61,7 @@ public class AddNewCountryDialog extends JDialog  {
 	private final String[] CONTINENTS = {"","Africa","Americas","Asia","Europe","Oceania",};
 
 	private String[] languageNames;
-	private LogicLayer addCountryLogic;
+	private WriteLogic addCountryLogic;
 
 	/**
 	 * Launch the application.
@@ -72,7 +72,7 @@ public class AddNewCountryDialog extends JDialog  {
 	 * Create the frame.
 	 * @param languages 
 	 */
-	public AddNewCountryDialog(LogicLayer addCountryLogic, String[] languages) 
+	public AddNewCountryDialog(WriteLogic addCountryLogic, String[] languages) 
 	{
 		getContentPane().setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
