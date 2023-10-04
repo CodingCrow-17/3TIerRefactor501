@@ -1,4 +1,3 @@
-import java.awt.EventQueue;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JFrame;
@@ -16,9 +15,9 @@ import view.DeleteDialog;
 import view.ModifyCountryDialog;
 import view.ModifyLanguageDialog;
 import view.ModifyRelationshipsDialogue;
+import view.components.CustomButton;
 import view.table.ResultSetTable;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.KeyEvent;
@@ -52,17 +51,17 @@ public class DatabaseGUI extends JFrame
 	private ResultSetTable tblLanguage;
 	private JScrollPane scpnCountry;
 	private JScrollPane scpnLanguage;
-	private JButton btnAddCountry;
-	private JButton btnImportCountries;
-	private JButton btnModifyCountry;
-	private JButton btnDeleteCountry;
-	private JButton btnAddLanguage;
-	private JButton btnImportLanguage;
-	private JButton btnModifyLanguage;
-	private JButton btnDeleteLanguage;
-	private JButton btnJoin;
-	private JButton btnSplit; 
-	private JButton btnResetTablesDisplay;
+	private CustomButton btnAddCountry;
+	private CustomButton btnImportCountries;
+	private CustomButton btnModifyCountry;
+	private CustomButton btnDeleteCountry;
+	private CustomButton btnAddLanguage;
+	private CustomButton btnImportLanguage;
+	private CustomButton btnModifyLanguage;
+	private CustomButton btnDeleteLanguage;
+	private CustomButton btnJoin;
+	private CustomButton btnSplit; 
+	private CustomButton btnResetTablesDisplay;
 
 	private final JFileChooser fileChooser = new JFileChooser();
 	private final FileNameExtensionFilter filter =
@@ -179,11 +178,7 @@ public class DatabaseGUI extends JFrame
 		}
 		contentPane.add(scpnLanguage);
 
-		btnAddCountry = new JButton("Add");
-		btnAddCountry.setBounds(510, 30, 89, 23);
-		btnAddCountry.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnAddCountry.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnAddCountry.addMouseListener(new MouseAdapter() {
+		btnAddCountry = new CustomButton("Add", 510, 30, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnAddCountry_mouseClicked(e);
@@ -191,11 +186,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnAddCountry);
 
-		btnImportCountries = new JButton("Import");
-		btnImportCountries.setBounds(510, 64, 89, 23);
-		btnImportCountries.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnImportCountries.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnImportCountries.addMouseListener(new MouseAdapter() {
+		btnImportCountries = new CustomButton("Import", 510, 64, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnImportCountries_mouseClicked(e);
@@ -203,11 +194,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnImportCountries);
 
-		btnModifyCountry = new JButton("Modify");
-		btnModifyCountry.setBounds(510, 98, 89, 23);
-		btnModifyCountry.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnModifyCountry.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnModifyCountry.addMouseListener(new MouseAdapter() {
+		btnModifyCountry = new CustomButton("Modify", 510,98, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnModifyCountry_mouseClicked(e);
@@ -215,11 +202,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnModifyCountry);
 
-		btnDeleteCountry = new JButton("Delete");
-		btnDeleteCountry.setBounds(510, 132, 89, 23);
-		btnDeleteCountry.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnDeleteCountry.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnDeleteCountry.addMouseListener(new MouseAdapter() {
+		btnDeleteCountry = new CustomButton("Delete", 510, 132, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnDeleteCountry_mouseClicked(e);
@@ -227,11 +210,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnDeleteCountry);
 
-		btnAddLanguage = new JButton("Add");
-		btnAddLanguage.setBounds(510, 239, 89, 23);
-		btnAddLanguage.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnAddLanguage.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnAddLanguage.addMouseListener(new MouseAdapter() {
+		btnAddLanguage = new CustomButton("Add", 510, 239, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnAddLanguage_mouseClicked(e);
@@ -239,11 +218,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnAddLanguage);
 
-		btnImportLanguage = new JButton("Import");
-		btnImportLanguage.setBounds(510, 273, 89, 23);
-		btnImportLanguage.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnImportLanguage.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnImportLanguage.addMouseListener(new MouseAdapter() {
+		btnImportLanguage = new CustomButton("Import", 510, 273, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnImportLanguage_mouseClicked(e);
@@ -251,11 +226,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnImportLanguage);
 
-		btnModifyLanguage = new JButton("Modify");
-		btnModifyLanguage.setBounds(510, 307, 89, 23);
-		btnModifyLanguage.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnModifyLanguage.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnModifyLanguage.addMouseListener(new MouseAdapter() {
+		btnModifyLanguage = new CustomButton("Modify", 510, 307, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnModifyLanguage_mouseClicked(e);
@@ -263,11 +234,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnModifyLanguage);
 
-		btnDeleteLanguage = new JButton("Delete");
-		btnDeleteLanguage.setBounds(510, 341, 89, 23);
-		btnDeleteLanguage.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnDeleteLanguage.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnDeleteLanguage.addMouseListener(new MouseAdapter() {
+		btnDeleteLanguage = new CustomButton("Delete", 510, 341, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnDeleteLanguage_mouseClicked(e);
@@ -275,11 +242,7 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnDeleteLanguage);
 
-		btnJoin = new JButton("Join");
-		btnJoin.setBounds(312, 183, 89, 23);
-		btnJoin.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnJoin.setFont(new Font("Times New Roman", Font.PLAIN, 11));
-		btnJoin.addMouseListener(new MouseAdapter() {
+		btnJoin = new CustomButton("Join", 312, 183, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				btnJoin_mouseClicked(e);
@@ -287,29 +250,21 @@ public class DatabaseGUI extends JFrame
 		});
 		contentPane.add(btnJoin);
 
-		btnSplit = new JButton("Split");
-		btnSplit.setBounds(411, 183, 89, 23);
-		btnSplit.addMouseListener(new MouseAdapter() {
+		btnSplit = new CustomButton("Split", 411, 183, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				btnSplit_mouseClicked(arg0);
 			}
 		});
-		btnSplit.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnSplit.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		contentPane.add(btnSplit);
 
-		btnResetTablesDisplay = new JButton("Reset Tables Display");
-		btnResetTablesDisplay.setBounds(10, 183, 139, 23);
-		btnResetTablesDisplay.addMouseListener(new MouseAdapter() {
+		btnResetTablesDisplay = new CustomButton("Reset Tables Display", 10, 183, 139, 23, new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) 
 			{
 				btnResetTablesDisplay_clicked();
 			}
 		});
-		btnResetTablesDisplay.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnResetTablesDisplay.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		fileChooser.setFileFilter(filter);
 		contentPane.add(btnResetTablesDisplay);
 	}
