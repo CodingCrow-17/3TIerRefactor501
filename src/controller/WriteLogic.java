@@ -2,11 +2,9 @@ package controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import model.Country;
 import model.Language;
