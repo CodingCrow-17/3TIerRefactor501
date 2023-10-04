@@ -13,7 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.Language;
 
 import java.awt.Font;
@@ -50,12 +50,12 @@ public class AddNewLanguageDialog extends JDialog {
 	private JScrollPane scpnCountries;
 	
 	private String[] countryNames;
-	private LogicLayer addLanguageLogic;
+	private WriteLogic addLanguageLogic;
 	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, LogicLayer addNewLanguageLogic, String[] countries) 
+	public static void main(String[] args, WriteLogic addNewLanguageLogic, String[] countries) 
 	{
 		try {
 			AddNewLanguageDialog dialog = new AddNewLanguageDialog(addNewLanguageLogic,countries);
@@ -70,7 +70,7 @@ public class AddNewLanguageDialog extends JDialog {
 	 * Create the dialog.
 	 * @param arrayOfOtherTypeNames 
 	 */
-	public AddNewLanguageDialog(LogicLayer addNewLanguageLogic, String[] countries) {
+	public AddNewLanguageDialog(WriteLogic addNewLanguageLogic, String[] countries) {
 		getContentPane().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

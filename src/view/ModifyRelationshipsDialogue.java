@@ -15,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.Country;
 import model.Language;
 
@@ -36,7 +36,7 @@ public class ModifyRelationshipsDialogue extends JDialog {
 
 	String[] countryNames;
 	String[] languageNames;
-	LogicLayer relationShipLogic;
+	WriteLogic relationShipLogic;
 
 	String title;
 	String btnModifyTag;
@@ -47,7 +47,7 @@ public class ModifyRelationshipsDialogue extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, LogicLayer logic,String[] countries, String[] languages, boolean isAddingRelationships) 
+	public static void main(String[] args, WriteLogic logic,String[] countries, String[] languages, boolean isAddingRelationships) 
 	{
 		try {
 			ModifyRelationshipsDialogue dialog = new ModifyRelationshipsDialogue(logic,countries,languages,isAddingRelationships);
@@ -61,7 +61,7 @@ public class ModifyRelationshipsDialogue extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ModifyRelationshipsDialogue(LogicLayer logic, String[] countries, String[] languages, boolean isAddingRelationships) {
+	public ModifyRelationshipsDialogue(WriteLogic logic, String[] countries, String[] languages, boolean isAddingRelationships) {
 		setFont(new Font("Times New Roman", Font.PLAIN, 12));
 		adjustForTypeOfModification(isAddingRelationships);
 		setTitle(title);

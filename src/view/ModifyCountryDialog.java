@@ -20,7 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.Country;
 import model.Language;
 
@@ -59,12 +59,12 @@ public class ModifyCountryDialog extends JDialog {
 	private final String[] CONTINENTS = {"","Africa","Americas","Asia","Europe","Oceania",};
 
 	private String[] languageNames;
-	private LogicLayer modifyCountryLogic;
+	private WriteLogic modifyCountryLogic;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, LogicLayer modifyCountryLogic, String[] languages, String[] countries) {
+	public static void main(String[] args, WriteLogic modifyCountryLogic, String[] languages, String[] countries) {
 		try {
 			ModifyCountryDialog dialog = new ModifyCountryDialog(modifyCountryLogic,languages,countries);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -77,7 +77,7 @@ public class ModifyCountryDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ModifyCountryDialog(LogicLayer modifyCountryLogic, String[] languages, String[] countries) 
+	public ModifyCountryDialog(WriteLogic modifyCountryLogic, String[] languages, String[] countries) 
 	{
 		setFont(new Font("Times New Roman", Font.PLAIN, 12));
 		setTitle("Modify Country");

@@ -15,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.TableType;
 
 import javax.swing.event.PopupMenuEvent;
@@ -32,11 +32,11 @@ public class DeleteDialog extends JDialog {
 
 	private String[] cbbxDeletableValues;
 	private boolean deletingCountry;
-	private LogicLayer deletingLogic;
+	private WriteLogic deletingLogic;
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, TableType type,String[] countries, String[] languages, LogicLayer deletingLogic) {
+	public static void main(String[] args, TableType type,String[] countries, String[] languages, WriteLogic deletingLogic) {
 		try {
 			DeleteDialog dialog = new DeleteDialog(type,countries,languages, deletingLogic);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -51,7 +51,7 @@ public class DeleteDialog extends JDialog {
 	 * @param languages 
 	 * @param countries 
 	 */
-	public DeleteDialog(TableType type, String[] countries, String[] languages,LogicLayer deletingLogic) 
+	public DeleteDialog(TableType type, String[] countries, String[] languages,WriteLogic deletingLogic) 
 	{
 		getContentPane().setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		setFont(new Font("Times New Roman", Font.PLAIN, 12));

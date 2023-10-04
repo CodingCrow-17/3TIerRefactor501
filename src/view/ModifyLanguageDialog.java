@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.PopupMenuListener;
 
-import controller.LogicLayer;
+import controller.WriteLogic;
 import model.Country;
 import model.Language;
 
@@ -51,12 +51,12 @@ public class ModifyLanguageDialog extends JDialog {
 	private Component scpnCountries;
 
 	private String[] countryNames;
-	private LogicLayer modifyLanguageLogic;
+	private WriteLogic modifyLanguageLogic;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args, LogicLayer modifyLanguageLogic, String[] languages, String[] countries)
+	public static void main(String[] args, WriteLogic modifyLanguageLogic, String[] languages, String[] countries)
 	{
 		try {
 			ModifyLanguageDialog dialog = new ModifyLanguageDialog(modifyLanguageLogic, languages,countries);
@@ -70,7 +70,7 @@ public class ModifyLanguageDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ModifyLanguageDialog(LogicLayer modifyLanguageLogic, String[] languages, String[] countries) {
+	public ModifyLanguageDialog(WriteLogic modifyLanguageLogic, String[] languages, String[] countries) {
 		getContentPane().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

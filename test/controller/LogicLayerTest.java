@@ -21,7 +21,7 @@ public class LogicLayerTest {
 
     private MockConnection connection = new MockConnection();
     private MockDatabaseUtilities utilities = MockDatabaseUtilities.getInstance();
-    private LogicLayer logic = LogicLayer.getInstance(connection, utilities);
+    private WriteLogic logic = WriteLogic.getInstance(connection, utilities);
 
     private Country testCountry = new Country("name", 100, 10, "continent");
     private Language testLanguage = new Language("name");

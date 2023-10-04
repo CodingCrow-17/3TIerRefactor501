@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import controller.DatabaseUtilities;
-import controller.LogicLayer;
+import controller.WriteLogic;
 import controller.MSAccessDatabaseConnection;
 import model.TableType;
 import view.AddNewCountryDialog;
@@ -42,7 +42,7 @@ import java.sql.Connection;
 
 public class DatabaseGUI extends JFrame 
 {
-	private LogicLayer logic = null;
+	private WriteLogic logic = null;
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
@@ -94,7 +94,7 @@ public class DatabaseGUI extends JFrame
 	private void connectToDatabase(){
 		MSAccessDatabaseConnection connection = MSAccessDatabaseConnection.createConnection(DATABASEFLENAME);
 		DatabaseUtilities utilities = DatabaseUtilities.createUDatabaseUtilities();
-		logic = LogicLayer.getInstance(connection, utilities);
+		logic = WriteLogic.getInstance(connection, utilities);
 	}
 
 	/**

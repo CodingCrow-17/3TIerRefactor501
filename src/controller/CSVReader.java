@@ -16,10 +16,10 @@ public class CSVReader
 	private TableType type;
 	private boolean invalidContinentEntered = false;
 
-	private LogicLayer importLogic;
+	private WriteLogic importLogic;
 	private final String[] CONTINENTS = {"Africa","Americas","Asia","Europe","Oceania",};
 
-	public CSVReader(LogicLayer logic)
+	public CSVReader(WriteLogic logic)
 	{
 		importLogic = logic;
 	}

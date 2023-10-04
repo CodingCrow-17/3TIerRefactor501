@@ -12,29 +12,42 @@ import model.Country;
 import model.Language;
 import model.TableType;
 
-public class LogicLayer 
+public class WriteLogic 
 {
-	private static final String DATABASEFLENAME = "res/LanguageAndCountryDatabase.accdb";
+	public static final String DATABASEFLENAME = "res/LanguageAndCountryDatabase.accdb";
 
-	private static final String PRIMARYTABLENAME = "Country";
-	private static final String SECONDARYTABLENAME = "Language";
-	private static final String RELATIONSHIPTABLE = "CountryLanguageRelationShip";
+	public static final String COUNTRYTABLENAME = "Country";
+	public static final String LANGUAGETABLENAME = "Language";
+	public static final String RELATIONSHIPTABLE = "CountryLanguageRelationShip";
 
 	private CSVReader reader = new CSVReader(this);
 
 	private Connection connection = null;
 	private DatabaseUtilitiesInterface utilities = null;
 
-	private static LogicLayer instance = null;
+	private static WriteLogic instance = null;
 
-	public static LogicLayer getInstance(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
+	private ReadLogic readLogic;
+
+	public static WriteLogic getInstance(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
 		if (instance == null) {
-			instance = new LogicLayer(msConnection, utilities);
+			instance = new WriteLogic(msConnection, utilities);
 		}
 		return instance;
 	}
 
-	private LogicLayer(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
+	public static WriteLogic getInstance(){
+		if (instance == null) {
+			System.err.println("have not instatiated the singleton yet");
+		}
+		return instance;
+	}
+
+	public void linkReadLogic(){
+		readLogic = ReadLogic.getInstance();
+	}
+
+	private WriteLogic(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
 		this.connection = msConnection.getConnection();
 		this.utilities = utilities;
 	}
@@ -74,7 +87,7 @@ public class LogicLayer
 	public Country getCountry(String countryID)
 	{
 		Country returnedCountry = null;
-		String query = "SELECT * FROM " + PRIMARYTABLENAME + " WHERE ID = " + Integer.parseInt(countryID);
+		String query = "SELECT * FROM " + COUNTRYTABLENAME + " WHERE ID = " + Integer.parseInt(countryID);
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -94,7 +107,7 @@ public class LogicLayer
 	public Language getLanguage(String languageID)
 	{
 		Language returnedLanguage = null;
-		String query = "SELECT * FROM " + SECONDARYTABLENAME + " WHERE ID = " + Integer.parseInt(languageID);
+		String query = "SELECT * FROM " + LANGUAGETABLENAME + " WHERE ID = " + Integer.parseInt(languageID);
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -152,7 +165,7 @@ public class LogicLayer
 		ArrayList<Language> returnedLanguagesArrayList = new ArrayList<Language>();
 		Language[] returnedLanguagesArray = null;
 		String query = "SELECT Language.ID " + 
-				"FROM [Language] INNER JOIN CountryLanguageRelationship ON Language.ID = CountryLanguageRelationship.LanguageID " + 
+				"FROM Language INNER JOIN CountryLanguageRelationship ON Language.ID = CountryLanguageRelationship.LanguageID " + 
 				"WHERE (((CountryLanguageRelationship.CountryID)='"+countryID+"'));";
 		ResultSet resultSet = runReturningQuery(query);
 		try 
@@ -167,7 +180,7 @@ public class LogicLayer
 		{
 			e.printStackTrace();
 		}
-		return arrayListToArrayLanguage(returnedLanguagesArrayList, returnedLanguagesArray);
+		return ArrayHelpers.arrayListToArrayLanguage(returnedLanguagesArrayList, returnedLanguagesArray);
 	}
 	public Country[] getAllCountries(String languageID)
 	{
@@ -189,7 +202,7 @@ public class LogicLayer
 		{
 			e.printStackTrace();
 		}
-		return arrayListToArrayCountries(returnedCountriesArrayList, returnedCountriesArray);
+		return ArrayHelpers.arrayListToArrayCountries(returnedCountriesArrayList, returnedCountriesArray);
 	}	
 
 	public void addCountry(Country newCountry)
@@ -198,7 +211,7 @@ public class LogicLayer
 		int potentialNewCountryID = getCountryID(newCountry.getName());
 		if (potentialNewCountryID == 0)
 		{
-			query = "INSERT INTO "+ PRIMARYTABLENAME +"("
+			query = "INSERT INTO "+ COUNTRYTABLENAME +"("
 					+ "Name,"
 					+ "Population,"
 					+ "Area,"
@@ -223,7 +236,7 @@ public class LogicLayer
 		int potentialNewLanguageID = getLanguageID(newLanguage.getName());
 		if (potentialNewLanguageID == 0)
 		{
-			query = "INSERT INTO "+ SECONDARYTABLENAME +"("
+			query = "INSERT INTO "+ LANGUAGETABLENAME +"("
 					+ "Name,"
 					+ "OfficialIn"
 					+ ")"
@@ -238,7 +251,7 @@ public class LogicLayer
 
 	public void deleteCountry(Country country)
 	{
-		String query = "DELETE FROM " + PRIMARYTABLENAME + " WHERE "
+		String query = "DELETE FROM " + COUNTRYTABLENAME + " WHERE "
 				+ "Name = '" + country.getName() + "' AND "
 				+ "Population = '" + country.getPopulation().intValue() + "' AND "
 				+ "Area = '" + country.getArea().intValue() + "' AND "
@@ -247,7 +260,7 @@ public class LogicLayer
 	}
 	public void deleteLanguage(Language language)
 	{
-		String query = "DELETE FROM " + SECONDARYTABLENAME + " WHERE "
+		String query = "DELETE FROM " + LANGUAGETABLENAME + " WHERE "
 				+ "Name = '" + language.getName() + "';";
 		runEditingQuery(query);
 	}
@@ -267,7 +280,7 @@ public class LogicLayer
 	{
 		Country countryToDelete = getCountry(String.valueOf(getCountryID(countryName)));
 		Language[] languages = getAllLanguages(String.valueOf(getCountryID(countryName)));
-		String[] languageNames = convertLanguageToStringArray(languages);
+		String[] languageNames = ArrayHelpers.convertLanguageToStringArray(languages);
 		deleteAllRelationshipsByCountry(String.valueOf(getCountryID(countryName)), languageNames);
 		deleteCountry(countryToDelete);
 	}
@@ -275,7 +288,7 @@ public class LogicLayer
 	{
 		Language languageToDelete = getLanguage(String.valueOf(getLanguageID(languageName)));
 		Country[] countries = getAllCountries(String.valueOf(getLanguageID(languageName)));
-		String[] countryNames = convertCountryToStringArray(countries);
+		String[] countryNames = ArrayHelpers.convertCountryToStringArray(countries);
 		deleteAllRelationshipsByLanguage(String.valueOf(getCountryID(languageName)), countryNames);
 		deleteLanguage(languageToDelete);
 	}
@@ -446,7 +459,7 @@ public class LogicLayer
 			e.printStackTrace();
 		}
 		countryNamesArray = new String[countryNamesArrayList.size()];
-		return arrayListToArrayString(countryNamesArrayList, countryNamesArray);
+		return ArrayHelpers.arrayListToArrayString(countryNamesArrayList, countryNamesArray);
 	}
 	public String[] getLanguageNames()
 	{
@@ -466,7 +479,7 @@ public class LogicLayer
 			e.printStackTrace();
 		}
 		languageNamesArray = new String[languageNamesArrayList.size()];
-		return arrayListToArrayString(languageNamesArrayList, languageNamesArray);
+		return ArrayHelpers.arrayListToArrayString(languageNamesArrayList, languageNamesArray);
 	}
 
 	public void updateCountry(int countryID, Country changedCountry, String[] newLanguages, boolean changingRelationships)
@@ -474,12 +487,12 @@ public class LogicLayer
 		if (changingRelationships)
 		{
 			Language[] oldLanguages = getAllLanguages(String.valueOf(countryID));
-			String[] oldLanguageNames = convertLanguageToStringArray(oldLanguages);
+			String[] oldLanguageNames = ArrayHelpers.convertLanguageToStringArray(oldLanguages);
 			
 			deleteAllRelationshipsByCountry(String.valueOf(countryID), oldLanguageNames);
 			addAllRelationshipsByCountry(String.valueOf(countryID), newLanguages);
 		}
-		String query = "UPDATE " + PRIMARYTABLENAME + " SET "
+		String query = "UPDATE " + COUNTRYTABLENAME + " SET "
 				+ "Name = '" + changedCountry.getName() + "',"
 				+ "Population = '" + changedCountry.getPopulation().intValue() + "',"
 				+ "Area = '" + changedCountry.getArea().intValue() + "',"
@@ -493,11 +506,11 @@ public class LogicLayer
 		if (changingRelationships)
 		{	
 			Country[] oldCountries = getAllCountries(String.valueOf(languageID));
-			String[] oldCountryNames = convertCountryToStringArray(oldCountries);
+			String[] oldCountryNames = ArrayHelpers.convertCountryToStringArray(oldCountries);
 			deleteAllRelationshipsByLanguage(String.valueOf(languageID),oldCountryNames);
 			addAllRelationshipsByLanguage(String.valueOf(languageID), newCountries);//check me, all else seems good
 		}
-		String query = "UPDATE " + SECONDARYTABLENAME + " SET "
+		String query = "UPDATE " + LANGUAGETABLENAME + " SET "
 				+ "Name = '" + changedLanguage.getName() + "', "
 				+ "OfficialIn = '" + getOfficialInCount(String.valueOf(languageID))+"' "
 				+ "WHERE ID = " + languageID  + ";";
@@ -533,48 +546,5 @@ public class LogicLayer
 		{
 			e1.printStackTrace();
 		}
-	}
-
-	private String[] arrayListToArrayString(ArrayList<String> arrayList, String[] array)
-	{
-		for(int i=0; i<arrayList.size(); i++)
-		{
-			array[i] = arrayList.get(i);
-		}
-		return array;
-	}
-	private Language[] arrayListToArrayLanguage(ArrayList<Language> arrayList, Language[] array)
-	{
-		for(int i=0; i<arrayList.size(); i++)
-		{
-			array[i] = arrayList.get(i);
-		}
-		return array;
-	}
-	private Country[] arrayListToArrayCountries(ArrayList<Country> arrayList, Country[] array) 
-	{
-		for(int i=0; i<arrayList.size(); i++)
-		{
-			array[i] = arrayList.get(i);
-		}
-		return array;
-	}
-	private String[] convertLanguageToStringArray(Language[] languages)
-	{
-		String[] returnedArray = new String[languages.length];
-		for (int l = 0; l < returnedArray.length; l++)
-		{
-			returnedArray[l] = languages[l].getName();
-		}
-		return returnedArray;
-	}
-	private String[] convertCountryToStringArray(Country[] countries)
-	{
-		String[] returnedArray = new String[countries.length];
-		for (int l = 0; l < returnedArray.length; l++)
-		{
-			returnedArray[l] = countries[l].getName();
-		}
-		return returnedArray;
 	}
 }
