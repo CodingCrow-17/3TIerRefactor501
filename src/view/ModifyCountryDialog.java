@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.PopupMenuListener;
 
+import controller.ReadLogic;
 import controller.WriteLogic;
 import model.Country;
 import model.Language;
@@ -59,7 +60,8 @@ public class ModifyCountryDialog extends JDialog {
 	private final String[] CONTINENTS = {"","Africa","Americas","Asia","Europe","Oceania",};
 
 	private String[] languageNames;
-	private WriteLogic modifyCountryLogic;
+	private WriteLogic modifyCountryLogic = WriteLogic.getInstance();
+	private ReadLogic readLogic = ReadLogic.getInstance();
 
 	/**
 	 * Launch the application.
@@ -430,10 +432,10 @@ public class ModifyCountryDialog extends JDialog {
 			{
 			String countryName = cbbxCountrySelection.getSelectedItem().toString();
 			
-			Country thisCountry = modifyCountryLogic.getCountry(String.valueOf(modifyCountryLogic.getCountryID(countryName)));
+			Country thisCountry = readLogic.getCountry(String.valueOf(readLogic.getCountryID(countryName)));
 			
 			Language[] alreadyOfficialLanguages = 
-					modifyCountryLogic.getAllLanguages(String.valueOf(modifyCountryLogic.getCountryID(countryName)));
+					readLogic.getAllLanguages(String.valueOf(readLogic.getCountryID(countryName)));
 	
 			insertItemsIntoCbbx(cbbxAddableLanguages, languageNames);
 	
@@ -537,7 +539,7 @@ public class ModifyCountryDialog extends JDialog {
 		
 		Country newCountry = new Country(countryName, countryPop, countryArea, countryContinent);
 
-		int countryID = modifyCountryLogic.getCountryID(cbbxCountrySelection.getSelectedItem().toString());
+		int countryID = readLogic.getCountryID(cbbxCountrySelection.getSelectedItem().toString());
 
 		modifyCountryLogic.updateCountry(countryID, newCountry, newCountryLanguages, true);
 	}

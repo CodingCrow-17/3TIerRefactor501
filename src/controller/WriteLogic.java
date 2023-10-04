@@ -20,7 +20,7 @@ public class WriteLogic
 	public static final String LANGUAGETABLENAME = "Language";
 	public static final String RELATIONSHIPTABLE = "CountryLanguageRelationShip";
 
-	private CSVReader reader = new CSVReader(this);
+	private CSVReader reader = null;
 
 	private Connection connection = null;
 	private DatabaseUtilitiesInterface utilities = null;
@@ -45,170 +45,18 @@ public class WriteLogic
 
 	public void linkReadLogic(){
 		readLogic = ReadLogic.getInstance();
+		reader = new CSVReader(this, readLogic);
 	}
 
 	private WriteLogic(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
 		this.connection = msConnection.getConnection();
 		this.utilities = utilities;
-	}
-
-	public ResultSet getFullCountryTableResultSet()
-	{
-		String query = "SELECT * From Country ORDER BY Name";
-
-		return runReturningQuery(query);
-	}
-	public ResultSet getFullLanguageTableResultSet()
-	{
-		String query =  "SELECT * From Language ORDER BY Name";
-
-		return runReturningQuery(query);
-	}
-
-	public ResultSet getCorrespondingCountriesTableResultSet(Integer languageID)
-	{
-		String query = "SELECT Country.* "
-				+ "FROM Country INNER JOIN CountryLanguageRelationShip "
-				+ "ON Country.ID = CountryLanguageRelationShip.CountryID "
-				+ "WHERE CountryLanguageRelationShip.LanguageID = " + languageID;
-		
-		return runReturningQuery(query);
-	}
-	public ResultSet getCorrespondingLanguagesTableResultSet(Integer countryID)
-	{
-		String query =  "SELECT Language.* "
-				+ "FROM Language INNER JOIN CountryLanguageRelationShip "
-				+ "ON Language.ID = CountryLanguageRelationShip.LanguageID "
-				+ "WHERE CountryLanguageRelationShip.CountryID = " + countryID;
-
-		return runReturningQuery(query);
-	}
-
-	public Country getCountry(String countryID)
-	{
-		Country returnedCountry = null;
-		String query = "SELECT * FROM " + COUNTRYTABLENAME + " WHERE ID = " + Integer.parseInt(countryID);
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			if (resultSet.next())
-			{
-				returnedCountry = new Country(resultSet.getString(2),
-						resultSet.getInt(3), resultSet.getInt(4),
-						resultSet.getString(5));
-			}
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return returnedCountry;
-	}
-	public Language getLanguage(String languageID)
-	{
-		Language returnedLanguage = null;
-		String query = "SELECT * FROM " + LANGUAGETABLENAME + " WHERE ID = " + Integer.parseInt(languageID);
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			if (resultSet.next())
-			{
-				returnedLanguage = new Language(resultSet.getString(2));
-			}
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return returnedLanguage;
-	}
-
-	public int getCountryID(String countryName)
-	{
-		int id = 0;
-		String query = "SELECT ID FROM Country WHERE NAME = '"+ countryName +"'";
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			if (resultSet.next())
-			{
-				id = resultSet.getInt(1);
-			}
-		} 
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return id;
-	}
-	public int getLanguageID(String languageName)
-	{
-		int id = 0;
-		String query = "SELECT ID FROM Language WHERE NAME = '"+ languageName +"'";
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			if (resultSet.next())
-			{
-				id = resultSet.getInt(1);
-			}
-		} 
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return id;
-	}
-
-	public Language[] getAllLanguages(String countryID)
-	{
-		ArrayList<Language> returnedLanguagesArrayList = new ArrayList<Language>();
-		Language[] returnedLanguagesArray = null;
-		String query = "SELECT Language.ID " + 
-				"FROM Language INNER JOIN CountryLanguageRelationship ON Language.ID = CountryLanguageRelationship.LanguageID " + 
-				"WHERE (((CountryLanguageRelationship.CountryID)='"+countryID+"'));";
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			while(resultSet.next())
-			{
-				returnedLanguagesArrayList.add(getLanguage(resultSet.getString(1)));
-			}
-			returnedLanguagesArray = new Language[returnedLanguagesArrayList.size()];
-		}
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return ArrayHelpers.arrayListToArrayLanguage(returnedLanguagesArrayList, returnedLanguagesArray);
-	}
-	public Country[] getAllCountries(String languageID)
-	{
-		ArrayList<Country> returnedCountriesArrayList = new ArrayList<Country>();
-		Country[] returnedCountriesArray = null;
-		String query = "SELECT Country.ID "+
-				"FROM Country INNER JOIN CountryLanguageRelationship ON Country.ID = CountryLanguageRelationship.CountryID "+
-				"WHERE (((CountryLanguageRelationship.LanguageID)='"+languageID+"'));";
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			while(resultSet.next())
-			{
-				returnedCountriesArrayList.add(getCountry(resultSet.getString(1)));
-			}
-			returnedCountriesArray = new Country[returnedCountriesArrayList.size()];
-		}
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return ArrayHelpers.arrayListToArrayCountries(returnedCountriesArrayList, returnedCountriesArray);
 	}	
 
 	public void addCountry(Country newCountry)
 	{
 		String query;
-		int potentialNewCountryID = getCountryID(newCountry.getName());
+		int potentialNewCountryID = readLogic.getCountryID(newCountry.getName());
 		if (potentialNewCountryID == 0)
 		{
 			query = "INSERT INTO "+ COUNTRYTABLENAME +"("
@@ -233,7 +81,7 @@ public class WriteLogic
 	public void addLanguage(Language newLanguage)
 	{
 		String query;
-		int potentialNewLanguageID = getLanguageID(newLanguage.getName());
+		int potentialNewLanguageID = readLogic.getLanguageID(newLanguage.getName());
 		if (potentialNewLanguageID == 0)
 		{
 			query = "INSERT INTO "+ LANGUAGETABLENAME +"("
@@ -268,28 +116,28 @@ public class WriteLogic
 	public void addInFullCountry(Country newCountry, String[] languages) 
 	{
 		addCountry(newCountry);
-		addAllRelationshipsByCountry(String.valueOf(getCountryID(newCountry.getName())),languages );
+		addAllRelationshipsByCountry(String.valueOf(readLogic.getCountryID(newCountry.getName())),languages );
 	}
 	public void addInFullLanguage(Language newLanguage, String[] countries) 
 	{
 		addLanguage(newLanguage);
-		addAllRelationshipsByLanguage(String.valueOf(getLanguageID(newLanguage.getName())),countries);
+		addAllRelationshipsByLanguage(String.valueOf(readLogic.getLanguageID(newLanguage.getName())),countries);
 	}
 
 	public void deleteInFullCountry(String countryName) 
 	{
-		Country countryToDelete = getCountry(String.valueOf(getCountryID(countryName)));
-		Language[] languages = getAllLanguages(String.valueOf(getCountryID(countryName)));
+		Country countryToDelete = readLogic.getCountry(String.valueOf(readLogic.getCountryID(countryName)));
+		Language[] languages = readLogic.getAllLanguages(String.valueOf(readLogic.getCountryID(countryName)));
 		String[] languageNames = ArrayHelpers.convertLanguageToStringArray(languages);
-		deleteAllRelationshipsByCountry(String.valueOf(getCountryID(countryName)), languageNames);
+		deleteAllRelationshipsByCountry(String.valueOf(readLogic.getCountryID(countryName)), languageNames);
 		deleteCountry(countryToDelete);
 	}
 	public void deleteInFullLanguage(String languageName) 
 	{
-		Language languageToDelete = getLanguage(String.valueOf(getLanguageID(languageName)));
-		Country[] countries = getAllCountries(String.valueOf(getLanguageID(languageName)));
+		Language languageToDelete = readLogic.getLanguage(String.valueOf(readLogic.getLanguageID(languageName)));
+		Country[] countries = readLogic.getAllCountries(String.valueOf(readLogic.getLanguageID(languageName)));
 		String[] countryNames = ArrayHelpers.convertCountryToStringArray(countries);
-		deleteAllRelationshipsByLanguage(String.valueOf(getCountryID(languageName)), countryNames);
+		deleteAllRelationshipsByLanguage(String.valueOf(readLogic.getCountryID(languageName)), countryNames);
 		deleteLanguage(languageToDelete);
 	}
 
@@ -318,43 +166,18 @@ public class WriteLogic
 		updateOfficialInCount(languageID);
 	}
 
-	public boolean doesRelationShipExist(int countryID, int languageID)
-	{
-		boolean doesExist = false;
-		ResultSet resultSet;
-		String query = "SELECT * FROM "+RELATIONSHIPTABLE + " WHERE "
-				+ "CountryID = '" + countryID +"' AND "
-				+ "LanguageID = '" + languageID +"';";
-		resultSet = runReturningQuery(query);
-		try 
-		{
-			if (resultSet.next())
-			{
-				if (resultSet.getInt(1) != 0)
-				{
-					doesExist = true;
-				}
-			}
-
-		} catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		return doesExist;
-	}
-
 	private void addAllRelationshipsByCountry(String countryID, String[] newLanguages)
 	{
 		for(int v = 0; v<newLanguages.length; v++)
 		{
-			addRelationship(countryID, String.valueOf(getLanguageID(newLanguages[v])));
+			addRelationship(countryID, String.valueOf(readLogic.getLanguageID(newLanguages[v])));
 		}
 	}
 	private void addAllRelationshipsByLanguage(String languageID, String[] newCountries)
 	{
 		for(int v = 0; v<newCountries.length; v++)
 		{
-			addRelationship(String.valueOf(getCountryID(newCountries[v])), languageID);
+			addRelationship(String.valueOf(readLogic.getCountryID(newCountries[v])), languageID);
 		}
 	}
 	
@@ -366,7 +189,7 @@ public class WriteLogic
 		updateOfficialLanguageCount(countryID);
 		for (int k = 0; k < oldLanguages.length; k++)
 		{
-			updateOfficialInCount(String.valueOf(getLanguageID(oldLanguages[k])));
+			updateOfficialInCount(String.valueOf(readLogic.getLanguageID(oldLanguages[k])));
 		}	
 	}
 	private void deleteAllRelationshipsByLanguage(String languageID, String[] oldCountries)
@@ -377,7 +200,7 @@ public class WriteLogic
 		updateOfficialInCount(languageID);
 		for (int k = 0; k < oldCountries.length; k++)
 		{
-			updateOfficialLanguageCount(String.valueOf(getCountryID(oldCountries[k])));
+			updateOfficialLanguageCount(String.valueOf(readLogic.getCountryID(oldCountries[k])));
 		}	
 	}	
 
@@ -486,7 +309,7 @@ public class WriteLogic
 	{
 		if (changingRelationships)
 		{
-			Language[] oldLanguages = getAllLanguages(String.valueOf(countryID));
+			Language[] oldLanguages = readLogic.getAllLanguages(String.valueOf(countryID));
 			String[] oldLanguageNames = ArrayHelpers.convertLanguageToStringArray(oldLanguages);
 			
 			deleteAllRelationshipsByCountry(String.valueOf(countryID), oldLanguageNames);
@@ -505,7 +328,7 @@ public class WriteLogic
 	{
 		if (changingRelationships)
 		{	
-			Country[] oldCountries = getAllCountries(String.valueOf(languageID));
+			Country[] oldCountries = readLogic.getAllCountries(String.valueOf(languageID));
 			String[] oldCountryNames = ArrayHelpers.convertCountryToStringArray(oldCountries);
 			deleteAllRelationshipsByLanguage(String.valueOf(languageID),oldCountryNames);
 			addAllRelationshipsByLanguage(String.valueOf(languageID), newCountries);//check me, all else seems good

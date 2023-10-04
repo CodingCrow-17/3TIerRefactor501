@@ -16,11 +16,13 @@ public class CSVReader
 	private TableType type;
 	private boolean invalidContinentEntered = false;
 
+	private ReadLogic readLogic;
 	private WriteLogic importLogic;
 	private final String[] CONTINENTS = {"Africa","Americas","Asia","Europe","Oceania",};
 
-	public CSVReader(WriteLogic logic)
+	public CSVReader(WriteLogic logic, ReadLogic readLogic)
 	{
+		readLogic = readLogic;
 		importLogic = logic;
 	}
 
@@ -93,14 +95,14 @@ public class CSVReader
 					String[] officialLanguagesArray = values[4].split(";");
 					for (int i = 0; i < officialLanguagesArray.length; i++)
 					{
-						if(importLogic.getLanguageID(officialLanguagesArray[i]) != 0 &&
-								!(importLogic.doesRelationShipExist(
-										importLogic.getCountryID(values[0]),
-										importLogic.getLanguageID(officialLanguagesArray[i]))))
+						if(readLogic.getLanguageID(officialLanguagesArray[i]) != 0 &&
+								!(readLogic.doesRelationShipExist(
+										readLogic.getCountryID(values[0]),
+										readLogic.getLanguageID(officialLanguagesArray[i]))))
 						{
 							importLogic.addRelationship(
-									String.valueOf(importLogic.getCountryID(values[0])),
-									String.valueOf(importLogic.getLanguageID(officialLanguagesArray[i])));
+									String.valueOf(readLogic.getCountryID(values[0])),
+									String.valueOf(readLogic.getLanguageID(officialLanguagesArray[i])));
 						}
 					}
 				}
@@ -118,14 +120,14 @@ public class CSVReader
 				String[] officialInsArray = values[1].split(";");
 				for (int i = 0; i < officialInsArray.length; i++)
 				{	
-					if(importLogic.getCountryID(officialInsArray[i]) != 0 &&
-							!(importLogic.doesRelationShipExist(
-									importLogic.getCountryID(officialInsArray[i]),
-									importLogic.getLanguageID(values[0]))))
+					if(readLogic.getCountryID(officialInsArray[i]) != 0 &&
+							!(readLogic.doesRelationShipExist(
+									readLogic.getCountryID(officialInsArray[i]),
+									readLogic.getLanguageID(values[0]))))
 					{
 						importLogic.addRelationship(
-								String.valueOf(importLogic.getCountryID(officialInsArray[i])),
-								String.valueOf(importLogic.getLanguageID(values[0])));
+								String.valueOf(readLogic.getCountryID(officialInsArray[i])),
+								String.valueOf(readLogic.getLanguageID(values[0])));
 					}
 				}
 			}

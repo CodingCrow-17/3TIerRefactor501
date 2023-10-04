@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.PopupMenuListener;
 
+import controller.ReadLogic;
 import controller.WriteLogic;
 import model.Country;
 import model.Language;
@@ -52,6 +53,7 @@ public class ModifyLanguageDialog extends JDialog {
 
 	private String[] countryNames;
 	private WriteLogic modifyLanguageLogic;
+	private ReadLogic readLogic = ReadLogic.getInstance();
 
 	/**
 	 * Launch the application.
@@ -345,10 +347,10 @@ public class ModifyLanguageDialog extends JDialog {
 			String languageName = cbbxLanguageSelection.getSelectedItem().toString();
 			
 			Country[] alreadyOfficialIn = 
-					modifyLanguageLogic.getAllCountries(String.valueOf(modifyLanguageLogic.getLanguageID(languageName)));
+					readLogic.getAllCountries(String.valueOf(readLogic.getLanguageID(languageName)));
 	
 			Language thisLanguage = 
-					modifyLanguageLogic.getLanguage(String.valueOf(modifyLanguageLogic.getLanguageID(languageName)));
+					readLogic.getLanguage(String.valueOf(readLogic.getLanguageID(languageName)));
 			
 			insertItemsIntoCbbx(cbbxAddableCountries, countryNames);
 	
@@ -448,7 +450,7 @@ public class ModifyLanguageDialog extends JDialog {
 		
 		String[] newLanguageCountries = countries.split(",\r\n");
 
-		int languageID = modifyLanguageLogic.getLanguageID(cbbxLanguageSelection.getSelectedItem().toString());
+		int languageID = readLogic.getLanguageID(cbbxLanguageSelection.getSelectedItem().toString());
 
 		Language newLanguage = new Language(languageName);
 

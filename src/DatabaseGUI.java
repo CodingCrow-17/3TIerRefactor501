@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import controller.DatabaseUtilities;
 import controller.WriteLogic;
 import controller.MSAccessDatabaseConnection;
+import controller.ReadLogic;
 import model.TableType;
 import view.AddNewCountryDialog;
 import view.AddNewLanguageDialog;
@@ -42,7 +43,8 @@ import java.sql.Connection;
 
 public class DatabaseGUI extends JFrame 
 {
-	private WriteLogic logic = null;
+	private WriteLogic writer = null;
+	private ReadLogic reader = null;
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
@@ -94,7 +96,10 @@ public class DatabaseGUI extends JFrame
 	private void connectToDatabase(){
 		MSAccessDatabaseConnection connection = MSAccessDatabaseConnection.createConnection(DATABASEFLENAME);
 		DatabaseUtilities utilities = DatabaseUtilities.createUDatabaseUtilities();
-		logic = WriteLogic.getInstance(connection, utilities);
+
+		writer = WriteLogic.getInstance(connection, utilities);
+		reader = ReadLogic.getInstance(connection, utilities);
+		writer.linkReadLogic();
 	}
 
 	/**
@@ -155,7 +160,7 @@ public class DatabaseGUI extends JFrame
 
 		try 
 		{
-			tblCountry = new ResultSetTable(logic.getFullCountryTableResultSet(), TableType.COUNTRY);
+			tblCountry = new ResultSetTable(reader.getFullCountryTableResultSet(), TableType.COUNTRY);
 			tblCountry.addMouseListener(new MouseAdapter() 
 			{
 				@Override
@@ -187,7 +192,7 @@ public class DatabaseGUI extends JFrame
 		contentPane.add(scpnCountry);
 
 		try {
-			tblLanguage = new ResultSetTable(logic.getFullLanguageTableResultSet(), TableType.LANGUAGE);
+			tblLanguage = new ResultSetTable(reader.getFullLanguageTableResultSet(), TableType.LANGUAGE);
 			tblLanguage.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e)
@@ -358,7 +363,7 @@ public class DatabaseGUI extends JFrame
 			try
 			{
 				ID = tblCountry.getSelectedID();
-				temp = logic.getCorrespondingLanguagesTableResultSet(ID);
+				temp = reader.getCorrespondingLanguagesTableResultSet(ID);
 				tblLanguage.updateTable(temp);
 				break;
 			}
@@ -371,7 +376,7 @@ public class DatabaseGUI extends JFrame
 			try
 			{
 				ID = tblLanguage.getSelectedID();
-				temp = logic.getCorrespondingCountriesTableResultSet(ID);
+				temp = reader.getCorrespondingCountriesTableResultSet(ID);
 				tblCountry.updateTable(temp);
 				break;
 			}
@@ -423,18 +428,18 @@ public class DatabaseGUI extends JFrame
 		switch (type)
 		{
 		case COUNTRY:
-			arrayOfOtherTypeNames = logic.getLanguageNames();
+			arrayOfOtherTypeNames = writer.getLanguageNames();
 			AddNewCountryDialog addCountryMenu = 
-					new AddNewCountryDialog(logic,arrayOfOtherTypeNames);
+					new AddNewCountryDialog(writer,arrayOfOtherTypeNames);
 			addCountryMenu.setLocationRelativeTo(this);
 			addCountryMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 			addCountryMenu.setVisible(true);
 			break;
 
 		case LANGUAGE:
-			arrayOfOtherTypeNames = logic.getCountryNames();
+			arrayOfOtherTypeNames = writer.getCountryNames();
 			AddNewLanguageDialog addLanguageMenu = 
-					new AddNewLanguageDialog(logic,arrayOfOtherTypeNames);
+					new AddNewLanguageDialog(writer,arrayOfOtherTypeNames);
 			addLanguageMenu.setLocationRelativeTo(this);
 			addLanguageMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 			addLanguageMenu.setVisible(true);
@@ -491,7 +496,7 @@ public class DatabaseGUI extends JFrame
 				selectedFile = fileChooser.getSelectedFile();
 				try 
 				{
-					logic.importData(selectedFile,type);
+					writer.importData(selectedFile,type);
 					JOptionPane.showMessageDialog(this,"We did it, YAAAY!",
 							"Succesful Import Complete",JOptionPane.PLAIN_MESSAGE);
 					actionTaken = true;
@@ -563,13 +568,13 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openModifyDialogue(TableType type)
 	{
-		String[] countryNames = logic.getCountryNames();
-		String[] languageNames = logic.getLanguageNames();
+		String[] countryNames = writer.getCountryNames();
+		String[] languageNames = writer.getLanguageNames();
 		switch (type)
 		{
 		case COUNTRY:
 			ModifyCountryDialog modifyCountryMenu = 
-			new ModifyCountryDialog(logic, languageNames, countryNames);
+			new ModifyCountryDialog(writer, languageNames, countryNames);
 			modifyCountryMenu.setLocationRelativeTo(this);
 			modifyCountryMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 			modifyCountryMenu.setVisible(true);
@@ -578,7 +583,7 @@ public class DatabaseGUI extends JFrame
 		case LANGUAGE:
 
 			ModifyLanguageDialog modifyLanguageMenu = 
-			new ModifyLanguageDialog(logic, languageNames, countryNames);
+			new ModifyLanguageDialog(writer, languageNames, countryNames);
 			modifyLanguageMenu.setLocationRelativeTo(this);
 			modifyLanguageMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 			modifyLanguageMenu.setVisible(true);
@@ -623,7 +628,7 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openDeleteDialogue(TableType type)
 	{
-		DeleteDialog deleteMenu = new DeleteDialog(type,logic.getCountryNames(),logic.getLanguageNames(), logic);
+		DeleteDialog deleteMenu = new DeleteDialog(type,writer.getCountryNames(),writer.getLanguageNames(), writer);
 		deleteMenu.setLocationRelativeTo(this);
 		deleteMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 		deleteMenu.setVisible(true);
@@ -640,10 +645,10 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openModifyRelationshipsDialogue(boolean isAdding)
 	{
-		String[] countryNames = logic.getCountryNames();
-		String[] languageNames = logic.getLanguageNames();
+		String[] countryNames = writer.getCountryNames();
+		String[] languageNames = writer.getLanguageNames();
 
-		ModifyRelationshipsDialogue modifyRelationshipsMenu = new ModifyRelationshipsDialogue(logic,countryNames,languageNames,isAdding);
+		ModifyRelationshipsDialogue modifyRelationshipsMenu = new ModifyRelationshipsDialogue(writer,countryNames,languageNames,isAdding);
 		modifyRelationshipsMenu.setLocationRelativeTo(this);
 		modifyRelationshipsMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 		modifyRelationshipsMenu.setVisible(true);
@@ -732,8 +737,8 @@ public class DatabaseGUI extends JFrame
 	{
 		try 
 		{
-			tblCountry.updateTable(logic.getFullCountryTableResultSet());
-			tblLanguage.updateTable(logic.getFullLanguageTableResultSet());
+			tblCountry.updateTable(reader.getFullCountryTableResultSet());
+			tblLanguage.updateTable(reader.getFullLanguageTableResultSet());
 		}
 		catch (SQLException e)
 		{

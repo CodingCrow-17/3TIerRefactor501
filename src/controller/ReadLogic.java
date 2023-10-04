@@ -186,7 +186,31 @@ public class ReadLogic {
 			e.printStackTrace();
 		}
 		return ArrayHelpers.arrayListToArrayCountries(returnedCountriesArrayList, returnedCountriesArray);
-	}	
+	}
+
+	public boolean doesRelationShipExist(int countryID, int languageID){
+		boolean doesExist = false;
+		ResultSet resultSet;
+		String query = "SELECT * FROM CountryLanguageRelationShip WHERE "
+				+ "CountryID = '" + countryID +"' AND "
+				+ "LanguageID = '" + languageID +"';";
+		resultSet = runReturningQuery(query);
+		try 
+		{
+			if (resultSet.next())
+			{
+				if (resultSet.getInt(1) != 0)
+				{
+					doesExist = true;
+				}
+			}
+
+		} catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return doesExist;
+	}
 
     private ResultSet runReturningQuery(String query){
 		ResultSet resultSet = null;
