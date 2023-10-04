@@ -14,7 +14,6 @@ import model.Language;
 
 public class WriteLogicTest {
     private MockDatabaseUtilities utilities = MockDatabaseUtilities.getInstance();
-    private ReadLogic reader = ReadLogic.getInstance(utilities);
     private WriteLogic logic = WriteLogic.getInstance(utilities);
 
     private Country testCountry = new Country("name", 100, 10, "continent");
@@ -22,6 +21,7 @@ public class WriteLogicTest {
 
     @Before
     public void setup(){
+        ReadLogic.getInstance(utilities);
         logic.linkReadLogic();
         utilities.reset();
     }
