@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import controller.DatabaseUtilities;
 import controller.WriteLogic;
 import controller.ReadLogic;
 import model.TableType;
@@ -37,13 +36,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 
-import java.sql.Connection;
-
-
 public class DatabaseGUI extends JFrame 
 {
-	private WriteLogic writer = null;
-	private ReadLogic reader = null;
+	private WriteLogic writer = WriteLogic.getInstance();
+	private ReadLogic reader = ReadLogic.getInstance();
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
@@ -71,40 +67,8 @@ public class DatabaseGUI extends JFrame
 	private final JFileChooser fileChooser = new JFileChooser();
 	private final FileNameExtensionFilter filter =
 			new FileNameExtensionFilter("CSV FILES", "csv", "csv");
-	private static final String DATABASEFLENAME = "res/LanguageAndCountryDatabase.accdb";
-
-	public static void main(String[] args) 
-	{
-		EventQueue.invokeLater(new Runnable() 
-		{
-			public void run() 
-			{
-				try 
-				{
-					DatabaseGUI frame = new DatabaseGUI();
-					frame.setVisible(true);
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	private void connectToDatabase(){
-		DatabaseUtilities utilities = DatabaseUtilities.createDatabaseUtilities();
-
-		writer = WriteLogic.getInstance(utilities);
-		reader = ReadLogic.getInstance(utilities);
-		writer.linkReadLogic();
-	}
-
-	/**
-	 * Create the frame.
-	 */
+			
 	public DatabaseGUI() {
-		connectToDatabase();
 		setTitle("Country Language database (2019)");
 		setResizable(false);
 		setFont(new Font("Times New Roman", Font.PLAIN, 12));
