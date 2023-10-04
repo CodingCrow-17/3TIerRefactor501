@@ -9,7 +9,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import controller.DatabaseUtilities;
 import controller.WriteLogic;
-import controller.MSAccessDatabaseConnection;
 import controller.ReadLogic;
 import model.TableType;
 import view.AddNewCountryDialog;
@@ -94,11 +93,10 @@ public class DatabaseGUI extends JFrame
 	}
 
 	private void connectToDatabase(){
-		MSAccessDatabaseConnection connection = MSAccessDatabaseConnection.createConnection(DATABASEFLENAME);
-		DatabaseUtilities utilities = DatabaseUtilities.createUDatabaseUtilities();
+		DatabaseUtilities utilities = DatabaseUtilities.createDatabaseUtilities();
 
-		writer = WriteLogic.getInstance(connection, utilities);
-		reader = ReadLogic.getInstance(connection, utilities);
+		writer = WriteLogic.getInstance(utilities);
+		reader = ReadLogic.getInstance(utilities);
 		writer.linkReadLogic();
 	}
 

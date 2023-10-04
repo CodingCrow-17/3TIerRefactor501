@@ -2,27 +2,20 @@ package controller;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Assert.*;
 
-import mocks.MockConnection;
 import mocks.MockDatabaseUtilities;
 import model.Country;
 import model.Language;
 
 public class WriteLogicTest {
-
-    private MockConnection connection = new MockConnection();
     private MockDatabaseUtilities utilities = MockDatabaseUtilities.getInstance();
-    private ReadLogic reader = ReadLogic.getInstance(connection, utilities);
-    private WriteLogic logic = WriteLogic.getInstance(connection, utilities);
+    private ReadLogic reader = ReadLogic.getInstance(utilities);
+    private WriteLogic logic = WriteLogic.getInstance(utilities);
 
     private Country testCountry = new Country("name", 100, 10, "continent");
     private Language testLanguage = new Language("name");

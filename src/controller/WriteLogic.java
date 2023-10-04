@@ -21,17 +21,15 @@ public class WriteLogic
 	public static final String RELATIONSHIPTABLE = "CountryLanguageRelationShip";
 
 	private CSVReader reader = null;
-
-	private Connection connection = null;
 	private DatabaseUtilitiesInterface utilities = null;
 
 	private static WriteLogic instance = null;
 
 	private ReadLogic readLogic;
 
-	public static WriteLogic getInstance(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
+	public static WriteLogic getInstance(DatabaseUtilitiesInterface utilities){
 		if (instance == null) {
-			instance = new WriteLogic(msConnection, utilities);
+			instance = new WriteLogic(utilities);
 		}
 		return instance;
 	}
@@ -48,8 +46,7 @@ public class WriteLogic
 		reader = new CSVReader(this, readLogic);
 	}
 
-	private WriteLogic(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
-		this.connection = msConnection.getConnection();
+	private WriteLogic(DatabaseUtilitiesInterface utilities){
 		this.utilities = utilities;
 	}	
 
@@ -351,7 +348,7 @@ public class WriteLogic
 		ResultSet resultSet = null;
 		try 
 		{
-			resultSet = utilities.runQuery(connection, query);
+			resultSet = utilities.query(query);
 		}
 		catch (SQLException e1)
 		{
@@ -363,7 +360,7 @@ public class WriteLogic
 	{
 		try 
 		{
-			utilities.execute(connection, query);
+			utilities.execute(query);
 		}
 		catch (SQLException e1)
 		{
