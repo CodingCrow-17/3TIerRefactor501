@@ -30,7 +30,6 @@ import java.awt.Dialog.ModalityType;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;

@@ -20,7 +20,7 @@ public class CustomButton extends JButton{
 
     private void init(String text, int x, int y, int width, int height, MouseAdapter mouseAdapter){
         this.setBounds(x,y,width,height);
-        this.setFont(new Font("Times New Roman", 0, 11));
+        this.setFont(new Font("Times New Roman", Font.PLAIN, 11));
         this.setVerticalAlignment(SwingConstants.BOTTOM);
         this.addMouseListener(mouseAdapter);
     }
