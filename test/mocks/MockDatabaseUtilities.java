@@ -37,14 +37,14 @@ public class MockDatabaseUtilities implements DatabaseUtilitiesInterface{
     }
 
     @Override
-    public ResultSet runQuery(Connection connection, String sql) throws SQLException {
+    public ResultSet query(String sql) throws SQLException {
         this.sqlHistory.add(sql);
         this.lastSqlUsed = sql;
         return new MockResultSet();
     }
 
     @Override
-    public boolean execute(Connection connection, String sql) throws SQLException {
+    public boolean execute(String sql) throws SQLException {
         this.lastSqlUsed = sql;
         this.sqlHistory.add(sql);
         return true;

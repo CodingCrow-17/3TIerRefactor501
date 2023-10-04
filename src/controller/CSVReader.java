@@ -22,7 +22,7 @@ public class CSVReader
 
 	public CSVReader(WriteLogic logic, ReadLogic readLogic)
 	{
-		readLogic = readLogic;
+		this.readLogic = readLogic;
 		importLogic = logic;
 	}
 

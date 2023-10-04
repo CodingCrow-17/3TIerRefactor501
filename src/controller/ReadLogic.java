@@ -1,6 +1,5 @@
 package controller;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,16 +8,13 @@ import model.Country;
 import model.Language;
 
 public class ReadLogic {
-	private Connection connection = null;
 	private DatabaseUtilitiesInterface utilities = null;
 
 	private static ReadLogic instance = null;
-    private WriteLogic languageLogic = null;
-    private WriteLogic relationShipLogic = null;
 
-	public static ReadLogic getInstance(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
+	public static ReadLogic getInstance(DatabaseUtilitiesInterface utilities){
 		if (instance == null) {
-			instance = new ReadLogic(msConnection, utilities);
+			instance = new ReadLogic(utilities);
 		}
 		return instance;
 	}
@@ -30,8 +26,7 @@ public class ReadLogic {
 		return instance;
 	}
 
-	private ReadLogic(MSAccessDatabaseConnectionInterface msConnection, DatabaseUtilitiesInterface utilities){
-		this.connection = msConnection.getConnection();
+	private ReadLogic(DatabaseUtilitiesInterface utilities){
 		this.utilities = utilities;
 	}
 
@@ -216,7 +211,7 @@ public class ReadLogic {
 		ResultSet resultSet = null;
 		try 
 		{
-			resultSet = utilities.runQuery(connection, query);
+			resultSet = utilities.query(query);
 		}
 		catch (SQLException e1)
 		{

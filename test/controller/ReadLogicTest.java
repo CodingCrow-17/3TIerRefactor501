@@ -1,24 +1,13 @@
 package controller;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import mocks.MockConnection;
 import mocks.MockDatabaseUtilities;
-import model.Country;
-import model.Language;
-
 public class ReadLogicTest {
-    private MockConnection connection = new MockConnection();
     private MockDatabaseUtilities utilities = MockDatabaseUtilities.getInstance();
-    private ReadLogic logic = ReadLogic.getInstance(connection, utilities);
-
-    private Country testCountry = new Country("name", 100, 10, "continent");
-    private Language testLanguage = new Language("name");
+    private ReadLogic logic = ReadLogic.getInstance(utilities);
 
     @Before
     public void setup(){

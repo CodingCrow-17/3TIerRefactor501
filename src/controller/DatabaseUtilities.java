@@ -1,56 +1,38 @@
 package controller;
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseUtilities implements DatabaseUtilitiesInterface{
 
 	private static DatabaseUtilities instance = null;
-	
-	public static DatabaseUtilities createUDatabaseUtilities(){
+	private MSAccessDatabaseConnection connection;
+
+	public static DatabaseUtilities createDatabaseUtilities(){
 		if (instance == null){
 			instance = new DatabaseUtilities();
 		}
 		return instance;
 	}
 
-	private DatabaseUtilities(){};
+	private DatabaseUtilities(){
+		connection = new MSAccessDatabaseConnection();
+	};
 
-    public void closeConnection(Connection connection) {
-        try {            
-        	if(null != connection) {
-                connection.close();
-            }
+    public void closeConnection() {
+        if(null != connection) {
+            connection.closeConnection();
         }
-	    catch (SQLException sqlex) {
-	        sqlex.printStackTrace();
-	    }
     }
     
-    public void closeQuery(ResultSet resultSet) {
-        try {
-			if (resultSet != null) {
-				Statement statement = resultSet.getStatement();
-				if (statement != null) {
-					statement.close();
-				}
-			    resultSet.close();
-			}
-		} catch (SQLException e) {
-			//SQL exception; handle but also log
-			e.printStackTrace();
-		}
-    }
-    
-    public ResultSet runQuery(Connection connection, String sql) throws SQLException{
+    public ResultSet query(String sql) throws SQLException{
     	ResultSet resultSet = null;
     	Statement statement = null;
 
     	// Create JDBC Statement 
-		statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		statement = connection.createStatementThatReturns();
 		
 		if (statement != null) {
     		// Execute SQL; retrieve data into ResultSet
@@ -65,7 +47,7 @@ public class DatabaseUtilities implements DatabaseUtilitiesInterface{
         return resultSet;
     }
     
-    public boolean execute(Connection connection, String sql) throws SQLException {
+    public boolean execute(String sql) throws SQLException {
 
     	Statement statement = null;
     	boolean result = false;
@@ -87,101 +69,55 @@ public class DatabaseUtilities implements DatabaseUtilitiesInterface{
     	return result;
     }
     
-    public void printResultSetMeta(ResultSet resultSet) {
-    	if (resultSet != null) {
-    		try {
-    			ResultSetMetaData meta = resultSet.getMetaData();
-    			for (int col = 1; col <= meta.getColumnCount(); col++) {
-    				System.out.println(String.format("%3d Name = %25s Type = %10s Size = %2d", col,meta.getColumnName(col) , meta.getColumnTypeName(col), meta.getColumnDisplaySize(col)));
-    			}
-    			meta.getColumnCount();
-    			
-    		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	}
-    	else {
-    		System.out.println("resultSet is null");
-    	}
-    }
+	private class MSAccessDatabaseConnection{
+		private final String DATABASEFLENAME = "res/LanguageAndCountryDatabase.accdb";
+		private Connection currentConnection = null;
 
-    public int printResultSet(ResultSet resultSet) {
-    	return printResultSet(resultSet, 65536, 255);
-    }
-    
-    public int printResultSet(ResultSet resultSet, int maxRows, int maxCols) {
-    	
-    	int count = 0;
-    	
-    	if (resultSet != null) {
-    		try {
-    			// processing returned data and printing into console
-    			resultSet.beforeFirst();
-    			ResultSetMetaData meta = resultSet.getMetaData();
-    			while(resultSet.next() && count < maxRows) {
-    				count++;
-    				for (int col = 1; col <= meta.getColumnCount() && col < maxCols; col++) {
-    					Object value = resultSet.getObject(col);
-    					
-    					if (col > 1) {
-    						System.out.print("\t");
-    					}    					
-    					if (meta.getColumnTypeName(col).contains("OTHER")) {
-    						System.out.print("(OTHER)");
-    					}
-    					else if (value != null) {
-        					System.out.print(value.toString());
-    					}
-    					else {
-    						System.out.print("\t");
-    					}
-    				}
-    				System.out.println();
-    			}
-    		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	}
-    	else {
-    		System.out.println("resultSet is null");
-    	}
-    	
-    	return count;
-    	    	
-    }
-    
-    public int getResultSetColCount(ResultSet resultSet) {
-    	int cols = 0;
-    	try {
-    		cols = resultSet.getMetaData().getColumnCount();
-			
-		} catch (SQLException e) {			
+		public MSAccessDatabaseConnection(){
+			try {
+	
+				Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+			}
+			catch(ClassNotFoundException cnfex) {
+	
+				System.out.println("Problem in loading or "
+						+ "registering MS Access JDBC driver");
+				cnfex.printStackTrace();
+			}
+	
+			// Step 2: Opening database connection
+			try {
+	
+				String dbURL = "jdbc:ucanaccess://" + DATABASEFLENAME; 
+	
+				// Step 2.A: Create and get connection using DriverManager class
+				this.currentConnection = DriverManager.getConnection(dbURL); 
+	
+			}
+			catch(SQLException sqlex){
+				sqlex.printStackTrace();
+			}
 		}
-    	return cols;
-    }
-    
-    
-    public long getResultSetRowCount(ResultSet resultSet) {
-    	
-    	int count = 0;
-    	
-    	if (resultSet != null) {
-    		try {
-    			// processing returned data and printing into console
-    			resultSet.beforeFirst();
-    			while(resultSet.next()) {
-    				count++;
-    			}
-    		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	}
-    	else {
-    		System.out.println("resultSet is null");
-    	}
-    	return count;	
-    }
+
+		public Statement createStatementThatReturns() throws SQLException {
+			return this.currentConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		}
+
+		public Statement createStatement() throws SQLException {
+			return this.currentConnection.createStatement();
+		}
+
+		public void closeConnection(){
+			try {            
+				if(null != currentConnection) {
+					// and then finally close connection
+					this.currentConnection.close();
+					this.currentConnection = null;
+				}
+			}
+			catch (SQLException sqlex) {
+				sqlex.printStackTrace();
+			}
+		}
+	}
 }
