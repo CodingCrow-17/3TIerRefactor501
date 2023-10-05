@@ -344,7 +344,7 @@ public class DatabaseGUI extends JFrame
 		switch (type)
 		{
 		case COUNTRY:
-			arrayOfOtherTypeNames = writer.getLanguageNames();
+			arrayOfOtherTypeNames = reader.getLanguageNames();
 			AddNewCountryDialog addCountryMenu = 
 					new AddNewCountryDialog(writer,arrayOfOtherTypeNames);
 			addCountryMenu.setLocationRelativeTo(this);
@@ -353,7 +353,7 @@ public class DatabaseGUI extends JFrame
 			break;
 
 		case LANGUAGE:
-			arrayOfOtherTypeNames = writer.getCountryNames();
+			arrayOfOtherTypeNames = reader.getCountryNames();
 			AddNewLanguageDialog addLanguageMenu = 
 					new AddNewLanguageDialog(writer,arrayOfOtherTypeNames);
 			addLanguageMenu.setLocationRelativeTo(this);
@@ -484,8 +484,8 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openModifyDialogue(TableType type)
 	{
-		String[] countryNames = writer.getCountryNames();
-		String[] languageNames = writer.getLanguageNames();
+		String[] countryNames = reader.getCountryNames();
+		String[] languageNames = reader.getLanguageNames();
 		switch (type)
 		{
 		case COUNTRY:
@@ -544,7 +544,7 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openDeleteDialogue(TableType type)
 	{
-		DeleteDialog deleteMenu = new DeleteDialog(type,writer.getCountryNames(),writer.getLanguageNames(), writer);
+		DeleteDialog deleteMenu = new DeleteDialog(type,reader.getCountryNames(),reader.getLanguageNames(), writer);
 		deleteMenu.setLocationRelativeTo(this);
 		deleteMenu.setModalityType(ModalityType.APPLICATION_MODAL);
 		deleteMenu.setVisible(true);
@@ -561,8 +561,8 @@ public class DatabaseGUI extends JFrame
 	}
 	private void openModifyRelationshipsDialogue(boolean isAdding)
 	{
-		String[] countryNames = writer.getCountryNames();
-		String[] languageNames = writer.getLanguageNames();
+		String[] countryNames = reader.getCountryNames();
+		String[] languageNames = reader.getLanguageNames();
 
 		ModifyRelationshipsDialogue modifyRelationshipsMenu = new ModifyRelationshipsDialogue(writer,countryNames,languageNames,isAdding);
 		modifyRelationshipsMenu.setLocationRelativeTo(this);

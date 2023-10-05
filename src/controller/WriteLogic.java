@@ -259,47 +259,6 @@ public class WriteLogic
 		runEditingQuery(query);
 	}
 	
-	public String[] getCountryNames()
-	{
-		ArrayList<String> countryNamesArrayList = new ArrayList<String>();
-		String[] countryNamesArray;
-		String query = "SELECT Name FROM Country ORDER BY Name";
-
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			while (resultSet.next())
-			{
-				countryNamesArrayList.add(resultSet.getString(1));
-			}
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		countryNamesArray = new String[countryNamesArrayList.size()];
-		return ArrayHelpers.arrayListToArrayString(countryNamesArrayList, countryNamesArray);
-	}
-	public String[] getLanguageNames()
-	{
-		ArrayList<String> languageNamesArrayList = new ArrayList<String>();
-		String[] languageNamesArray;
-		String query = "SELECT Name FROM Language ORDER BY Name";
-
-		ResultSet resultSet = runReturningQuery(query);
-		try 
-		{
-			while (resultSet.next())
-			{
-				languageNamesArrayList.add(resultSet.getString(1));
-			}
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		languageNamesArray = new String[languageNamesArrayList.size()];
-		return ArrayHelpers.arrayListToArrayString(languageNamesArrayList, languageNamesArray);
-	}
-
 	public void updateCountry(int countryID, Country changedCountry, String[] newLanguages, boolean changingRelationships)
 	{
 		if (changingRelationships)

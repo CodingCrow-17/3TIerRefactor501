@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.event.PopupMenuListener;
 
+import controller.ReadLogic;
 import controller.WriteLogic;
 import model.TableType;
 
@@ -33,6 +34,7 @@ public class DeleteDialog extends JDialog {
 	private String[] cbbxDeletableValues;
 	private boolean deletingCountry;
 	private WriteLogic deletingLogic;
+	private ReadLogic readLogic = ReadLogic.getInstance();
 	/**
 	 * Launch the application.
 	 */
@@ -206,13 +208,13 @@ public class DeleteDialog extends JDialog {
 		if (deletingCountry)
 		{
 			deletingLogic.deleteInFullCountry(cbbxDeletables.getSelectedItem().toString());
-			cbbxDeletableValues = deletingLogic.getCountryNames();
+			cbbxDeletableValues = readLogic.getCountryNames();
 			updateCbbxDeletables();
 		}
 		else
 		{
 			deletingLogic.deleteInFullLanguage(cbbxDeletables.getSelectedItem().toString());
-			cbbxDeletableValues = deletingLogic.getLanguageNames();
+			cbbxDeletableValues = readLogic.getLanguageNames();
 			updateCbbxDeletables();
 		}
 	}

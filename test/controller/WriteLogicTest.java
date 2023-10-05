@@ -169,20 +169,6 @@ public class WriteLogicTest {
     }
 
     @Test
-    public void getCountryNames(){
-        String expected = "SELECT Name FROM Country ORDER BY Name";
-        logic.getCountryNames();
-        checkLastSqlUsed(expected);
-    }
-
-    @Test
-    public void getLanguageNames(){
-        String expected = "SELECT Name FROM Language ORDER BY Name";
-        logic.getLanguageNames();
-        checkLastSqlUsed(expected);
-    }
-
-    @Test
     public void updateCountry(){
         String expected = "UPDATE " + "Country" + " SET "
             + "Name = '" + testCountry.getName() + "',"

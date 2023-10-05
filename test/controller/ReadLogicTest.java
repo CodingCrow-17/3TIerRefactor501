@@ -16,14 +16,14 @@ public class ReadLogicTest {
 
     @Test
     public void getFullCountryTableResultSet(){
-        String expected = "SELECT * From Country ORDER BY Name";
+        String expected = "SELECT * FROM Country ORDER BY Name";
         logic.getFullCountryTableResultSet();
         checkLastSqlUsed(expected);
     }
     
     @Test
     public void getFullLanguageTableResultSet(){
-        String expected = "SELECT * From Language ORDER BY Name";
+        String expected = "SELECT * FROM Language ORDER BY Name";
         logic.getFullLanguageTableResultSet();
         checkLastSqlUsed(expected);
     }
@@ -87,11 +87,34 @@ public class ReadLogicTest {
     }
 
     @Test
+    public void getCountryNames(){
+        String expected = "SELECT Name FROM Country ORDER BY Name";
+        logic.getCountryNames();
+        checkLastSqlUsed(expected);
+    }
+
+    @Test
+    public void getLanguageNames(){
+        String expected = "SELECT Name FROM Language ORDER BY Name";
+        logic.getLanguageNames();
+        checkLastSqlUsed(expected);
+    }
+
+    @Test
     public void getAllCountries(){
         String expected = "SELECT Country.ID "+
         "FROM Country INNER JOIN CountryLanguageRelationship ON Country.ID = CountryLanguageRelationship.CountryID "+
         "WHERE (((CountryLanguageRelationship.LanguageID)='"+790871234+"'));";
         logic.getAllCountries("790871234");
+        checkLastSqlUsed(expected);
+    }
+
+    @Test
+    public void doesRelationShipExist(){
+        String expected = "SELECT * FROM CountryLanguageRelationShip WHERE "
+            + "CountryID = '" + 792387 +"' AND "
+            + "LanguageID = '" + 129834589 +"';";
+        logic.doesRelationShipExist(792387, 129834589);
         checkLastSqlUsed(expected);
     }
 }
