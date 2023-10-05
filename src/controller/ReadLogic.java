@@ -32,21 +32,21 @@ public class ReadLogic {
 
     public ResultSet getFullCountryTableResultSet()
 	{
-		String query = "SELECT * From Country ORDER BY Name";
+		String query = sqlSelectItemFromTable("*", "Country")+"ORDER BY Name";
 
 		return runReturningQuery(query);
 	}
 	public ResultSet getFullLanguageTableResultSet()
 	{
-		String query =  "SELECT * From Language ORDER BY Name";
+		String query =  sqlSelectItemFromTable("*", "Language")+"ORDER BY Name";
 
 		return runReturningQuery(query);
 	}
 
 	public ResultSet getCorrespondingCountriesTableResultSet(Integer languageID)
 	{
-		String query = "SELECT Country.* "
-				+ "FROM Country INNER JOIN CountryLanguageRelationShip "
+		String query = sqlSelectItemFromTable("Country.*", "Country")
+				+ "INNER JOIN CountryLanguageRelationShip "
 				+ "ON Country.ID = CountryLanguageRelationShip.CountryID "
 				+ "WHERE CountryLanguageRelationShip.LanguageID = " + languageID;
 		
@@ -54,8 +54,8 @@ public class ReadLogic {
 	}
 	public ResultSet getCorrespondingLanguagesTableResultSet(Integer countryID)
 	{
-		String query =  "SELECT Language.* "
-				+ "FROM Language INNER JOIN CountryLanguageRelationShip "
+		String query =  sqlSelectItemFromTable("Language.*", "Language")
+				+ "INNER JOIN CountryLanguageRelationShip "
 				+ "ON Language.ID = CountryLanguageRelationShip.LanguageID "
 				+ "WHERE CountryLanguageRelationShip.CountryID = " + countryID;
 
@@ -65,7 +65,7 @@ public class ReadLogic {
 	public Country getCountry(String countryID)
 	{
 		Country returnedCountry = null;
-		String query = "SELECT * FROM Country WHERE ID = " + Integer.parseInt(countryID);
+		String query = sqlSelectItemFromTable("*", "Country")+ "WHERE ID = " + Integer.parseInt(countryID);
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -85,7 +85,7 @@ public class ReadLogic {
 	public Language getLanguage(String languageID)
 	{
 		Language returnedLanguage = null;
-		String query = "SELECT * FROM Language WHERE ID = " + Integer.parseInt(languageID);
+		String query = sqlSelectItemFromTable("*", "Language")+ "WHERE ID = " + Integer.parseInt(languageID);
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -104,7 +104,7 @@ public class ReadLogic {
 	public int getCountryID(String countryName)
 	{
 		int id = 0;
-		String query = "SELECT ID FROM Country WHERE NAME = '"+ countryName +"'";
+		String query = sqlSelectItemFromTable("ID", "Country") +"WHERE NAME = '"+ countryName +"'";
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -122,7 +122,7 @@ public class ReadLogic {
 	public int getLanguageID(String languageName)
 	{
 		int id = 0;
-		String query = "SELECT ID FROM Language WHERE NAME = '"+ languageName +"'";
+		String query = sqlSelectItemFromTable("ID", "Language") + "WHERE NAME = '"+ languageName +"'";
 		ResultSet resultSet = runReturningQuery(query);
 		try 
 		{
@@ -142,8 +142,8 @@ public class ReadLogic {
 	{
 		ArrayList<Language> returnedLanguagesArrayList = new ArrayList<Language>();
 		Language[] returnedLanguagesArray = null;
-		String query = "SELECT Language.ID " + 
-				"FROM Language INNER JOIN CountryLanguageRelationship ON Language.ID = CountryLanguageRelationship.LanguageID " + 
+		String query = sqlSelectItemFromTable("Language.ID", "Language") +
+				"INNER JOIN CountryLanguageRelationship ON Language.ID = CountryLanguageRelationship.LanguageID " + 
 				"WHERE (((CountryLanguageRelationship.CountryID)='"+countryID+"'));";
 		ResultSet resultSet = runReturningQuery(query);
 		try 
@@ -164,8 +164,8 @@ public class ReadLogic {
 	{
 		ArrayList<Country> returnedCountriesArrayList = new ArrayList<Country>();
 		Country[] returnedCountriesArray = null;
-		String query = "SELECT Country.ID "+
-				"FROM Country INNER JOIN CountryLanguageRelationship ON Country.ID = CountryLanguageRelationship.CountryID "+
+		String query = sqlSelectItemFromTable("Country.ID", "Country") +
+				"INNER JOIN CountryLanguageRelationship ON Country.ID = CountryLanguageRelationship.CountryID "+
 				"WHERE (((CountryLanguageRelationship.LanguageID)='"+languageID+"'));";
 		ResultSet resultSet = runReturningQuery(query);
 		try 
@@ -186,8 +186,8 @@ public class ReadLogic {
 	public boolean doesRelationShipExist(int countryID, int languageID){
 		boolean doesExist = false;
 		ResultSet resultSet;
-		String query = "SELECT * FROM CountryLanguageRelationShip WHERE "
-				+ "CountryID = '" + countryID +"' AND "
+		String query = sqlSelectItemFromTable("*", "CountryLanguageRelationShip")
+				+ "WHERE CountryID = '" + countryID +"' AND "
 				+ "LanguageID = '" + languageID +"';";
 		resultSet = runReturningQuery(query);
 		try 
@@ -205,6 +205,50 @@ public class ReadLogic {
 			e.printStackTrace();
 		}
 		return doesExist;
+	}
+
+	public String[] getCountryNames(){
+		ArrayList<String> countryNamesArrayList = new ArrayList<String>();
+		String[] countryNamesArray;
+		String query = sqlSelectItemFromTable("Name", "Country")+"ORDER BY Name";
+
+		ResultSet resultSet = runReturningQuery(query);
+		try 
+		{
+			while (resultSet.next())
+			{
+				countryNamesArrayList.add(resultSet.getString(1));
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		countryNamesArray = new String[countryNamesArrayList.size()];
+		return ArrayHelpers.arrayListToArrayString(countryNamesArrayList, countryNamesArray);
+	}
+	
+	public String[] getLanguageNames(){
+		ArrayList<String> languageNamesArrayList = new ArrayList<String>();
+		String[] languageNamesArray;
+		String query = sqlSelectItemFromTable("Name", "Language")+"ORDER BY Name";
+
+		ResultSet resultSet = runReturningQuery(query);
+		try 
+		{
+			while (resultSet.next())
+			{
+				languageNamesArrayList.add(resultSet.getString(1));
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		languageNamesArray = new String[languageNamesArrayList.size()];
+		return ArrayHelpers.arrayListToArrayString(languageNamesArrayList, languageNamesArray);
+	}
+
+	private String sqlSelectItemFromTable(String item, String tableName){
+		return String.format("SELECT %s FROM %s ", item, tableName);
 	}
 
     private ResultSet runReturningQuery(String query){
